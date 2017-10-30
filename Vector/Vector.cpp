@@ -122,24 +122,40 @@ public:
         {
             if(_a[index]==data)
             {
-                return index;
+               return index;
             }
             index++;
         }
         return -1;
     }
+    
 
-    bool Insert(size_t pos)
+    bool Insert(size_t pos,const T data)
     {
         if(pos<1||pos>_size)
-            return false:
-
-        return false;
+            return false;
+        checkcapcity();
+        size_t index;
+        for(index=_size;index>pos-1;index--)
+        {
+            _a[index]=_a[index-1];
+        }
+        _size++;
+        _a[pos-1]=data;
+        return true;
     }
 
     bool Erase(size_t pos)
     {
-        return false;
+        if(pos>_size||pos<1)
+            return false;
+        size_t index;
+        for(index=pos-1;_size-1>index;index++)
+        {
+            _a[index]=_a[index+1];
+        }
+        _size--;
+        return true;
     }
 
     void Print()
@@ -177,6 +193,9 @@ int main()
     v2=v;
     v2.Print();
     Vector<int> v3(v);
+    v3.Insert(3,6);
+    v3.Print();
+    v3.Erase(3);
     v3.Print();
     cout<<v[5]<<endl;
     return 0;
