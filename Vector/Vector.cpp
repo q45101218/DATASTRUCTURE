@@ -158,6 +158,16 @@ public:
         return true;
     }
 
+    void Reverse()
+    {
+        size_t index;
+        size_t length=_size-1;
+        for(index=0;index<_size>>1;index++)
+        {
+            swap(_a[index],_a[length]);
+            length--;
+        }
+    }
     void Print()
     {
         assert(_size>0);
@@ -196,6 +206,8 @@ int main()
     v3.Insert(3,6);
     v3.Print();
     v3.Erase(3);
+    v3.Print();
+    v3.Reverse();
     v3.Print();
     cout<<v[5]<<endl;
     return 0;
