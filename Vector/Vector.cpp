@@ -21,15 +21,52 @@ public:
     {}
 
     Vector(const Vector<T>& v)
-    {}
+    :_capacity(v._capacity)
+    ,_size(0)
+    ,_a(new T[_capacity])
+    {
+        int index=0;
+        for(index;index<v._size;index++)
+        {
+            Push_Back(v._a[index]);
+        }
+    }
 
     ~Vector()
-    {}
+    {
+        if(_a!=NULL)
+        {
+            delete[] _a;
+            _size=0;
+            _capacity=0;
+        }
+    
+    }
 
     Vector<T>& operator=(Vector<T> v)
     {
+        swap(_a,v._a);
+        swap(_size,v._size);
+        swap(_capacity,v._capacity);
         return *this;
     }
+    /*
+    Vector<T>& operator=(Vector<T>& v)
+    {
+        if(this!=&v)
+        {
+            release();
+            _a=new T[_capacity];
+            _size=v._size;
+            _capacity=v._capacity;
+            size_t index;
+            for(index;index<_size;index++)
+            {
+                Push_Back(v._a[index]);
+            }
+        }
+    }
+    */
 
     T& operator[](size_t pos)
     {
@@ -57,7 +94,14 @@ public:
     }
 
     void release()
-    {}
+    {
+        if(_a!=NULL)
+        {
+            delete[] _a;
+            _size=0;
+            _capacity=0;
+        }
+    }
 
     void Push_Back(const T& data)
     {
@@ -73,11 +117,23 @@ public:
 
     size_t Find(const T& data)
     {
-        return 1;
+        size_t index=0;
+        while(index!=_size)
+        {
+            if(_a[index]==data)
+            {
+                return index;
+            }
+            index++;
+        }
+        return -1;
     }
 
     bool Insert(size_t pos)
     {
+        if(pos<1||pos>_size)
+            return false:
+
         return false;
     }
 
@@ -92,7 +148,7 @@ public:
         size_t index;
         for(index=0;index<_size;index++)
         {
-            cout<<_a[index]<<endl;
+            cout<<_a[index]<<" ";
         }
         cout<<endl;
     }
@@ -112,8 +168,16 @@ int main()
     v.Push_Back(4);
     v.Push_Back(5);
     v.Push_Back(6);
-
-    cout<<v[5]<<endl;
     v.Print();
+    Vector<int> v2;
+    v2.Push_Back(1);
+    v2.Push_Back(2);
+    v2.Push_Back(3);
+    v2.Print();
+    v2=v;
+    v2.Print();
+    Vector<int> v3(v);
+    v3.Print();
+    cout<<v[5]<<endl;
     return 0;
 }
