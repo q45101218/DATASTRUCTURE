@@ -33,7 +33,22 @@ public:
     {}
 
     List(const List& l)
-    {}
+    :_head(NULL)
+    {
+        Node<T>* cur=l._head;
+        while(cur->_next!=l._head)
+        {
+            Push_Back(cur->_data);
+            cur=cur->_next;
+        }
+        Push_Back(cur->_data);
+    }
+
+    List& operator=(List l)
+    {
+        swap(_head,l._head);
+        return *this;
+    }
 
     void Push_Back(const T& data)
     {
@@ -83,7 +98,7 @@ public:
             _head->_prev->_next->_prev=_head->_prev;
             _head->_prev->_next->_next=_head;
             _head->_prev=_head->_prev->_next->_next;
-            _head=_head->prev;
+            _head=_head->_prev;
         }
     }
 
@@ -111,7 +126,6 @@ public:
     {
         if(_head!=NULL)
         {
-            Node<T>* tail=_head->_prev;
             Node<T>* del=_head;
             while(del->_next!=_head)
             {
@@ -123,6 +137,20 @@ public:
         }
     }
 
+    void Print()
+    {
+        if(_head!=NULL)
+        {
+            Node<T>* tmp=_head;
+            while(tmp->_next!=_head)
+            {
+                cout<<tmp->_data<<" ";
+                tmp=tmp->_next;
+            }
+            cout<<tmp->_data;
+        }
+        cout<<endl;
+    }
 private:
     Node<T>* _head;
 };
