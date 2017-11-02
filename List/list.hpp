@@ -97,7 +97,7 @@ public:
             _head->_prev->_next=new Node<T>(data);
             _head->_prev->_next->_prev=_head->_prev;
             _head->_prev->_next->_next=_head;
-            _head->_prev=_head->_prev->_next->_next;
+            _head->_prev=_head->_prev->_next;
             _head=_head->_prev;
         }
     }
