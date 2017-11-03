@@ -18,7 +18,8 @@ struct Node
     :_next(NULL)
     ,_data(data)
     {}
-}
+};
+
 template<class T>
 class List 
 {
@@ -28,20 +29,62 @@ public:
     ,_tail(NULL)
     {}
 
-    List(const List<T>& List)
-    {}
+    List(const List<T>& l)
+    :_head(NULL)
+    ,_tail(NULL)
+    {
+        Node<T>* tmp=l._head;
+        while(tmp)
+        {
+            Push_Back(tmp->_data);
+            tmp=tmp->_next;
+        }
+    }
 
     List& operator=(List<T> l)
-    {}
+    {
+        swap(_head,l._head);
+        swap(_tail,l._tail);
+    }
 
     ~List()
-    {}
+    {
+        if(_head!=NULL)
+        {
+            Node<T>* del=_head;
+            Node<T>* tmp=_head;
+            while(del)
+            {
+                tmp=del;
+                del=del->_next;
+                delete tmp; 
+            }
+        }
+    }
 
     void Push_Back(const T& data)
-    {}
+    {
+        if(_head==NULL)
+        {
+            _head=_tail=new Node<T>(data);
+        }
+        else
+        {
+            _tail->_next=new Node<T>(data);
+            _tail=_tail->_next;
+        }
+    }
 
     void Push_Front(const T& data)
-    {}
+    {
+        if(_head==NULL)
+        {
+            _head=_tail=new Node<T>(data);
+        }
+        Node<T>* tmp=new Node<T>(data);
+        tmp->_next=_head;
+        _head=tmp;
+    }
 
     void Pop_Back()
     {}
@@ -49,10 +92,42 @@ public:
     void Pop_Front()
     {}
 
-    Node<T>* Find()
-    {}
+   // Node<T>* Find()
+   // {}
+
+    void Print()
+    {
+        Node<T>* tmp=_head;
+        while(tmp)
+        {
+            cout<<tmp->_data<<" ";
+            tmp=tmp->_next;
+        }
+        cout<<endl;
+    }
 
 private: 
     Node<T>* _head;
     Node<T>* _tail;
+};
+
+
+int main()
+{
+    List<int> l;
+    l.Push_Back(1);
+    l.Push_Back(2);
+    l.Push_Back(3);
+    l.Push_Back(4);
+    l.Push_Back(5);
+    l.Print();
+    l.Push_Front(0);
+    l.Print();
+    List<int> l2(l);
+    l2.Print();
+    List<int> l3;
+    l3=l2;
+    l3.Print();
+    return 0;
 }
+
