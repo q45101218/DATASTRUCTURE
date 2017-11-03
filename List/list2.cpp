@@ -6,6 +6,7 @@
  ************************************************************************/
 
 #include<iostream>
+#include<assert.h>
 using namespace std;
 
 template<class T>
@@ -87,10 +88,41 @@ public:
     }
 
     void Pop_Back()
-    {}
+    {
+        assert(_head);
+        if(_head==_tail)
+        {
+            delete _head;
+            _head=_tail=NULL;
+        }
+        else
+        {
+            Node<T>* tmp=_head;
+            while(tmp->_next!=_tail)
+            {
+                tmp=tmp->_next;
+            }
+            _tail=tmp;
+            delete _tail->_next;
+            _tail->_next=NULL;
+        }
+    }
 
     void Pop_Front()
-    {}
+    {
+        assert(_head);
+        if(_head==_tail)
+        {
+            delete _head;
+            _head=_tail=NULL;
+        }
+        else
+        {
+            Node<T>* del=_head;
+            _head=_head->_next;
+            delete del;
+        }
+    }
 
    // Node<T>* Find()
    // {}
@@ -124,9 +156,11 @@ int main()
     l.Push_Front(0);
     l.Print();
     List<int> l2(l);
+    l2.Pop_Back();
     l2.Print();
     List<int> l3;
-    l3=l2;
+    l3=l;
+    l3.Pop_Front();
     l3.Print();
     return 0;
 }
