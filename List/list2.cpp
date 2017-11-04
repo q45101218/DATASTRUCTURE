@@ -7,6 +7,7 @@
 
 #include<iostream>
 #include<assert.h>
+#include<algorithm>
 using namespace std;
 
 template<class T>
@@ -124,10 +125,86 @@ public:
         }
     }
 
-   // Node<T>* Find()
-   // {}
+    Node<T>* Find(const T& data)const
+    {
+        Node<T>* tmp=_head;
+        while(tmp)
+        {
+            if(tmp->_data==data)
+            {
+                return tmp;
+            }
+            tmp=tmp->_next;
+        }
+        return NULL;
+    }
 
-    void Print()
+    void Erase(const Node<T>* node)
+    {
+        Node<T>* tmp=_head;
+        Node<T>* prev=_head;
+        while(tmp)
+        {
+            if(tmp==node)
+            {
+                prev->_next=tmp->_next;
+                delete tmp;
+                break;
+            }
+            prev=tmp;
+            tmp=tmp->_next;
+        }
+    }
+
+    void Reverse()
+    {
+        assert(_head);
+        Node<T>* cur=_head;
+        Node<T>* prev=NULL;
+        Node<T>* next=_head;
+        while(next)
+        {
+            next=cur->_next;
+            cur->_next=prev;
+            prev=cur;
+            cur=next;
+        }
+        swap(_head,_tail);
+    }
+
+    Node<T>* Findmidkey()
+    {
+        assert(_head);
+        if(_head==_tail)
+            return _head;
+        Node<T>* slow=_head;
+        Node<T>* fast=_head;
+        while(slow&&fast)
+        {
+            slow=slow->_next;
+            fast=fast->_next->_next;
+        }
+        return slow;
+    }
+
+    bool Modvalue(Node<T>* node,const T& data)
+    {
+        Node<T>* tmp=_head;
+        while(tmp)
+        {
+            if(tmp==node)
+                break;
+            tmp=tmp->_next;
+        }
+        if(tmp)
+        {
+            tmp->_data=data;
+            return true;
+        }
+        return false;
+    }
+
+    void Print()const
     {
         Node<T>* tmp=_head;
         while(tmp)
@@ -160,7 +237,15 @@ int main()
     l2.Print();
     List<int> l3;
     l3=l;
+    cout<<l3.Findmidkey()->_data<<endl;
     l3.Pop_Front();
+    l3.Print();
+    l3.Erase(l3.Find(3));
+    l3.Print();
+    l3.Reverse();
+    l3.Print();
+    cout<<l3.Findmidkey()->_data<<endl;
+    l3.Modvalue(l3.Findmidkey(),0);
     l3.Print();
     return 0;
 }
