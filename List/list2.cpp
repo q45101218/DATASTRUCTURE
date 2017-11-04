@@ -47,6 +47,7 @@ public:
     {
         swap(_head,l._head);
         swap(_tail,l._tail);
+        return *this;
     }
 
     ~List()
@@ -141,6 +142,7 @@ public:
 
     void Erase(const Node<T>* node)
     {
+        assert(node);
         Node<T>* tmp=_head;
         Node<T>* prev=_head;
         while(tmp)
@@ -204,6 +206,18 @@ public:
         return false;
     }
 
+    size_t Size()const
+    {
+        size_t count=0;
+        Node<T>* tmp=_head;
+        while(tmp)
+        {
+            count++;
+            tmp=tmp->_next;
+        }
+        return count;
+    }
+
     void Print()const
     {
         Node<T>* tmp=_head;
@@ -232,6 +246,7 @@ int main()
     l.Print();
     l.Push_Front(0);
     l.Print();
+    cout<<l.Size()<<endl;
     List<int> l2(l);
     l2.Pop_Back();
     l2.Print();
@@ -247,6 +262,7 @@ int main()
     cout<<l3.Findmidkey()->_data<<endl;
     l3.Modvalue(l3.Findmidkey(),0);
     l3.Print();
+    cout<<l3.Size()<<endl;
     return 0;
 }
 

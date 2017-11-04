@@ -120,8 +120,6 @@ public:
         }
     }
 
-
-
     ~List()
     {
         if(_head!=NULL)
