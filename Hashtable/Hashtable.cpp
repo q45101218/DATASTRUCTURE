@@ -33,9 +33,9 @@ struct Hashnode
 template<class K>
 struct HashFun
 {
-    size_t operator()(K num,size_t size)
+    size_t operator()(K k)
     {
-        return num%size;
+        return k;
     }
 };
 
@@ -68,8 +68,7 @@ public:
     bool Insert(K k,V v)
     {
         Checkconflict();
-        __HashFun HashFun;
-        size_t index=HashFun(k,table.size());
+        size_t index=Hashfun(k);
         while(table[index].key=k||(table[index].key=k&&table[index].con!=EXIST))
         {
             if(table[index].con!=EXIST)
@@ -100,7 +99,7 @@ public:
     void Changecapacity()
     {
         Hashtable<K,V,__HashFun> newtable;
-        newtable.table.resize(table.size()*2);
+        newtable.table.resize(GetNextPrime(table.size()));
         for(size_t index=0;index<table.size();index++)
         {
             if(table[index].con==EXIST)
@@ -110,15 +109,21 @@ public:
         }
         table.swap(newtable.table);
     }
-    
-    int Find(const K& k)
+
+    size_t Hashfun(const K& k)
     {
-        size_t index=__HashFun()(k,table.size());
+        __HashFun hashfun;
+        return hashfun(k)%table.size();
+    }    
+   
+    node* Find(const K& k)
+    {
+        size_t index=Hashfun(k);
         while(table[index].con!=EMPTY)
         {
             if(table[index].key==k&&table[index].con==EXIST)
             {
-                return index;
+                return &table[index];
             }
 
             index++;
@@ -127,19 +132,43 @@ public:
                 index=0;
             }
         }
-        return -1;
+        return NULL;
     }
-
+     
     bool Erase(const K& pos)
     {
-        if(Find(pos)!=-1)
+        if(Find(pos)!=NULL)
         {
-            table[Find(pos)].con=DELETE;
+            Find(pos)->con=DELETE;
             size--;
+            return true;
         }
+        return false;
     }
 
+    size_t GetNextPrime(size_t value)
+    {
+        const size_t _PrimeSize = 28;
+        static const unsigned long _PrimeList [_PrimeSize] =
+        {
+            53ul,         97ul,         193ul,       389ul,       769ul,
+            1543ul,       3079ul,       6151ul,      12289ul,     24593ul,
+            49157ul,      98317ul,      196613ul,    393241ul,    786433ul,
+            1572869ul,    3145739ul,    6291469ul,   12582917ul,  25165843ul,
+            50331653ul,   100663319ul,  201326611ul, 402653189ul, 805306457ul,
+            1610612741ul, 3221225473ul, 4294967291ul              
+        };
 
+        for (size_t i = 0; i < _PrimeSize; ++i)
+        {
+            if (_PrimeList[i] > value)
+            {
+                return _PrimeList[i];                
+            }           
+        }
+                
+        return _PrimeList[_PrimeSize-1];           
+    }
 private:
     vector<node> table;
     size_t size;
@@ -153,9 +182,7 @@ int main()
     h.Insert(8,1);
     h.Insert(9,1);
     h.Insert(4,1);
-    int index=h.Find(4);
     h.Erase(4);
-    int index2=h.Find(4);
     h.Insert(11,1);
     h.Insert(14,1);
     h.Insert(10,1);
