@@ -8,6 +8,38 @@
 #include<iostream>
 #include<vector>
 using namespace std;
+template<class K,class V,class Ref,class Ptr>
+struct Iterator
+{
+    typedef typename Iterator<K,V,Ref,Ptr> Iterator;
+    typedef Hashtable<K,V,__HashFun> Hashtable;
+    typedef Hashnode<K,V> node;
+
+    Iterator(node* ptr,Hashtable* ht)
+    :_ptr(ptr)
+    ,_ht(ht)
+    {}
+
+    Iterator(const Iterator& it)
+    :_ptr(it._ptr)
+    ,_h(it._ht)
+    {}
+
+    Iterator operator=(const Iterator& it)
+    {
+        _ptr=it._ptr;
+        _h=it._ht;
+    }
+    
+    Ref operator*()
+    {
+        return node;
+    }
+
+private:
+    node* _ptr;
+    Hashtable* _ht;
+};
 
 template<class K,class V>
 struct Hashnode
@@ -52,7 +84,8 @@ public:
         CheckLoadFactory();
         __HashFun hashfun;
         size_t index=hashfun(key,_table.size());
-        Find(key);
+        if(!Find(key))
+            return false;
         if(_table[index]==NULL)
         {
             _table[index]=new node(key,value);
@@ -63,6 +96,7 @@ public:
             tmp->_next=_table[index];
             _table[index]=tmp;
         }
+        _size++;
         return true;
     }
 
@@ -84,12 +118,13 @@ public:
         }
         prv->_next=cur->_next;
         delete cur;
+        _size--;
         return true;
     }
     
     void CheckLoadFactory()
     {
-        if(_size=0||_size*10/_table.size()>7)
+        if(_size=0||_size*10/_table.size()>10)
         {
             _size==0? _table.resize(7):Reallocate();
         }
@@ -126,6 +161,7 @@ public:
                 }
             }
         }
+        _table.swap(newtable);
     }
 private:
     vector<node*> _table;
