@@ -4,7 +4,7 @@
 	> Mail:yangkungetit@163.com 
 	> Created Time: Sun 05 Nov 2017 11:01:34 PM PST
  ************************************************************************/
-nclude<iostream>
+#include<iostream>
 #include<vector>
 using namespace std;
 
@@ -23,13 +23,30 @@ struct Hashnode
     {}
 };
 
+template<class K,class ValueType>
+struct _KofK
+{
+    K operator()(K key)
+    {
+        return key;
+    }
+};
+
+template<class K, class V>
+struct _KofKV
+{
+    K operator()(const pair<K, V>& v)
+    {
+        return v.first;
+    }
+};
 
 template<class ValueType, class Ref,class Ptr, class K, class KofValueType, class __HashFun>
 struct Iterator
 {
     typedef Iterator<ValueType, Ref, Ptr, K, KofValueType, __HashFun> Self;
-    typedef Hashtable<K, ValueType, KofValueType, __HashFun> Hashtable;
-    typedef Hashnode<ValueType> node;
+    typedef typename Hashtable<K, ValueType, KofValueType, __HashFun> Hashtable;
+    typedef typename Hashnode<ValueType> node;
 
 
     Iterator(node* ptr=NULL, Hashtable* h=NULL)
@@ -37,12 +54,12 @@ struct Iterator
         ,_ht(h)
     {}
 
-    Iterator(const Iterator& it)
+    Iterator(const Self& it)
         :_ptr(it._ptr)
         , _ht(it._ht)
     {}
 
-    Iterator& operator=(const Iterator it)
+    Iterator& operator=(const Self it)
     {
         _ptr = it._ptr;
         _ht = it._ht;
@@ -59,33 +76,47 @@ struct Iterator
         return &(_ptr->_value);
     }
 
-    bool operator!=(const Iterator& it)
+    bool operator!=(const Self& it)
     {
         return it._ptr != _ptr;
     }
 
-    bool operator==(const Iterator& it)
+    bool operator==(const Self& it)
     {
         return it._ptr == _ptr;
     }
 
     Self& operator++()
-    {}
+    {
+        Increase();
+        return *this;
+    }
 
     Self operator++(int)
-    {}
+    {
+        Self it(*this);
+        Increase();
+        return it;
+    }
 
     Self& operator--()
-    {}
+    {
+        Decrease();
+        return *this;
+    }
 
     Self operator--(int)
-    {}
+    {
+        Self it(*this);
+        Decrease();
+        return it;
+    }
 
     node* _ptr;
     Hashtable* _ht;
 
 private:
-    Self& Increase()
+    void Increase()
     {
         if (_ptr->_next)
         {
@@ -94,9 +125,58 @@ private:
         else
         {
             KofValueType _KofValueType;
-            size_t index = _ht->Hashfun(_KofValueType(_ptr->_value), _ht->_table.size());
+            size_t index = _ht->Hashfun(_KofValueType(_ptr->_value), _ht->_table.size())+1;
+            for (index; index < _ht->_table.size();index++)
+            {
+                if (_ht->_table[index] != NULL)
+                {
+                    _ptr = _ht->_table[index];
+                    return;
+                }
+            }
+            _ptr = NULL;
         }
     }
+
+    void Decrease()
+    {
+        KofValueType _KofValueType;
+        size_t index = _ht->Hashfun(_KofValueType(_ptr->_value), _ht->_table.size());
+        if (_ht->_table[index] != _ptr)
+        {
+            node* cur = _ht->_table[index];
+            while (cur)
+            {
+                if (cur->_next == _ptr)
+                {
+                    _ptr = cur;
+                    return;
+                }
+                cur = cur->_next;
+            }
+        }
+        else
+        {
+            for (index - 1; index >= 0; index--)
+            {
+                if (_ht->_table[index] != NULL)
+                {
+                    node* cur = _ht->_table[index];
+                    while (cur)
+                    {
+                        if (cur->_next == NULL)
+                        {
+                            _ptr = cur;
+                            return;
+                        }
+                        cur = cur->_next;
+                    }
+                }
+            }
+        }
+        _ptr = NULL;
+    }
+
 };
 
 
@@ -109,30 +189,13 @@ struct HashFun
     }
 };
 
-template<class K>
-struct _KofK
-{
-    K operator()(K key)
-    {
-        return key;
-    }
-};
-
-template<class K, class ValueType>
-struct _KofKV
-{
-    K operator()(ValueType v/*const pair<K, V>& v*/)
-    {
-        return v.first;
-    }
-};
 
 template<class K, class ValueType, class KofValueType, class __HashFun = HashFun<K> >
 class Hashtable
 {
     typedef Hashnode<ValueType> node;
     typedef Hashtable<K,ValueType, KofValueType, __HashFun> _Hashtable;
-    typedef Iterator<ValueType, ValueType&, ValueType*, K, KofValueType, __HashFun> Iterator;
+    typedef typename Iterator<ValueType, ValueType&, ValueType*, K, KofValueType, __HashFun> Iterator;
 
 public:
     Hashtable()
@@ -172,75 +235,91 @@ public:
                 delete del;
                 del = tmp;
             }
+            _table[index] = NULL;
         }
     }
     
+    Iterator Begin()
+    {
+        node* cur = NULL;
+        for (size_t index = 0; index < _table.size(); index++)
+        {
+            if (_table[index])
+            {
+                cur = _table[index];
+                return Iterator(cur, this);
+            }
+        }
+    }
+
+    Iterator End()
+    {
+        return Iterator(NULL, this);
+    }
+
     size_t Hashfun(const K& k, size_t size)
     {
         __HashFun _hashfun;
         return _hashfun(k)%size;
     }
 
-    bool Insert(const ValueType& value)
+    pair<Iterator,bool> Insert(const ValueType& value)
     {
         CheckLoadFactory();
         KofValueType _KofValueType;
 
         size_t index = Hashfun(_KofValueType(value), _table.size());
-
-        //if (!Find(_KofValueType(value)))
-        //  return false;
-        if (_table[index] == NULL)
-        {
-            _table[index] = new node(value);
-        }
+        Iterator it = Find(_KofValueType(value));
+        if (it!=NULL)
+            return make_pair(it,false);
         else
         {
             node* tmp = new node(value);
             tmp->_next = _table[index];
             _table[index] = tmp;
+            _size++;
+            return make_pair(Iterator(tmp,this),true);
         }
-        _size++;
-        return true;
     }
 
-    bool Find(const K& key)
+    Iterator Find(const K& key)
     {
         size_t index = Hashfun(key, _table.size());
         KofValueType _KofValueType;
         if (_table[index] == NULL)
-            return false;
+            return End();
         else
         {
             node* cur = _table[index];
             while (cur != NULL)
             {
                 if (_KofValueType(cur->_value) == key)
-                    return true;
+                    return Iterator(cur, this);
                 cur = cur->_next;
             }
-            return false;
+            return End();
         }
     }
 
     bool Erase(const K& key)
     {
-        size_t index = Hashfun(ValueType, _table.size());
+        size_t index = Hashfun(key, _table.size());
 
         assert(_table[index]);
         node* cur = _table[index];
-        node* pre = _table[index];
-        while (key != = cur->key)
+        node* pre= _table[index];
+        while (key != cur->key)
         {
-            prv = cur;
+            pre = cur;
             cur = cur->_next;
         }
-        prv->_next = cur->_next;
+        pre->_next = cur->_next;
         delete cur;
         _size--;
         return true;
     }
 
+private:
     void CheckLoadFactory()
     {
         if (_size == 0 || _size*10 / _table.size()>10)
@@ -311,7 +390,7 @@ private:
 
 int main()
 {
-    Hashtable<int, pair<int,int>,_KofKV<int,int>> h;
+    Hashtable< int, pair<int,int> , _KofKV<int,int> > h;
     h.Insert(make_pair(2,2));
     /*h.Insert(9, 2);
     h.Insert(16, 2);
