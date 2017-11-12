@@ -2,12 +2,13 @@
 	> File Name: Hashtablelink.cpp
 	> Author:YangKun 
 	> Mail:yangkungetit@163.com 
-	> Created Time: Sun 05 Nov 2017 11:01:34 PM PST
+	> Created Time: Sun 12 Nov 2017 06:11:02 AM PST
  ************************************************************************/
+
 #include<iostream>
 #include<vector>
+#include<assert.h>
 using namespace std;
-
 template<class K, class ValueType, class KofValueType, class __HashFun>
 class Hashtable;
 
@@ -23,30 +24,13 @@ struct Hashnode
     {}
 };
 
-template<class K,class ValueType>
-struct _KofK
-{
-    K operator()(K key)
-    {
-        return key;
-    }
-};
-
-template<class K, class V>
-struct _KofKV
-{
-    K operator()(const pair<K, V>& v)
-    {
-        return v.first;
-    }
-};
 
 template<class ValueType, class Ref,class Ptr, class K, class KofValueType, class __HashFun>
 struct Iterator
 {
     typedef Iterator<ValueType, Ref, Ptr, K, KofValueType, __HashFun> Self;
-    typedef typename Hashtable<K, ValueType, KofValueType, __HashFun> Hashtable;
-    typedef typename Hashnode<ValueType> node;
+    typedef Hashtable<K, ValueType, KofValueType, __HashFun> Hashtable;
+    typedef Hashnode<ValueType> node;
 
 
     Iterator(node* ptr=NULL, Hashtable* h=NULL)
@@ -189,15 +173,36 @@ struct HashFun
     }
 };
 
+template<class K,class ValueType>
+struct _KofK
+{
+    K operator()(K key)
+    {
+        return key;
+    }
+};
+
+template<class K, class V>
+struct _KofKV
+{
+    K operator()(const pair<K, V>& v)
+    {
+        return v.first;
+    }
+};
+
 
 template<class K, class ValueType, class KofValueType, class __HashFun = HashFun<K> >
 class Hashtable
 {
+    friend struct Iterator<ValueType, ValueType&, ValueType*, K, KofValueType, __HashFun>;
+
     typedef Hashnode<ValueType> node;
     typedef Hashtable<K,ValueType, KofValueType, __HashFun> _Hashtable;
-    typedef typename Iterator<ValueType, ValueType&, ValueType*, K, KofValueType, __HashFun> Iterator;
 
 public:
+    typedef typename Iterator<ValueType, ValueType&, ValueType*, K, KofValueType, __HashFun> Iterator;
+
     Hashtable()
         :_size(0)
     {}
@@ -307,19 +312,18 @@ public:
 
         assert(_table[index]);
         node* cur = _table[index];
-        node* pre= _table[index];
+        node* prv = _table[index];
         while (key != cur->key)
         {
-            pre = cur;
+            prv = cur;
             cur = cur->_next;
         }
-        pre->_next = cur->_next;
+        prv->_next = cur->_next;
         delete cur;
         _size--;
         return true;
     }
 
-private:
     void CheckLoadFactory()
     {
         if (_size == 0 || _size*10 / _table.size()>10)
@@ -390,8 +394,20 @@ private:
 
 int main()
 {
-    Hashtable< int, pair<int,int> , _KofKV<int,int> > h;
-    h.Insert(make_pair(2,2));
+    Hashtable<int,pair<int,int>,_KofKV<int,int> > h;
+    h.Insert(make_pair(1, 2));
+    h.Insert(make_pair(2, 2));
+    h.Insert(make_pair(3, 2));
+    h.Insert(make_pair(4, 2));
+    h.Insert(make_pair(5, 2));
+    h.Insert(make_pair(6, 2));
+    Hashtable<int, pair<int, int>, _KofKV<int, int> >::Iterator it = h.Begin();
+    while (it != h.End())
+    {
+        cout << (*it).second << " ";
+        it++;
+    }
+    cout << endl;
     /*h.Insert(9, 2);
     h.Insert(16, 2);
     h.Insert(23, 2);
