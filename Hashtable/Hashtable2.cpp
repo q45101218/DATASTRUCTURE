@@ -82,7 +82,7 @@ class Hashtable
 {
     typedef Hashnode<ValueType> node;
     typedef Hashtable<K,ValueType,KofValueType,__HashFun> hashtable;
-    friend HashtableIterator<K,ValueType,ValueType&,ValueType*,KofValueType,__HashFun> Iterator;
+    friend struct HashtableIterator<K,ValueType,ValueType&,ValueType*,KofValueType,__HashFun>;
 public:
     typedef HashtableIterator<K,ValueType,ValueType&,ValueType*,KofValueType,__HashFun> Iterator;
 
@@ -126,7 +126,8 @@ public:
                 {
                     node* next=tmp->_next;
                     newindex=Hashfun(tmp->_value,newtable.size());
-                    newtable[newindex]=
+                    tmp->_next=newtable[newindex];
+                    newtable[newindex]=tmp;
                 }
             }
         }
