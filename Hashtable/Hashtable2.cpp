@@ -73,7 +73,31 @@ struct HashtableIterator
         return _ptr;
     }
 
+    Self& operator++()
+    {
+        Increase();
+        return *this;
+    }
 
+    Self operator++(int)
+    {
+        Self tmp(*this);
+        Increase();
+        return tmp;
+    }
+
+    Self& operator--()
+    {
+        Decrease();
+        return *this;
+    }
+
+    Self operator--(int)
+    {
+        Self tmp(*this);
+        Decrease();
+        return tmp;
+    }
 
     hashtable* _ht;
     node* _ptr;
@@ -84,7 +108,7 @@ private:
         assert(_ptr);
         if(_ptr->_next)
         {
-            _ptr=_ptr->-next;
+            _ptr=_ptr->_next;
             return;
         }
         else
@@ -197,6 +221,21 @@ public:
         _size++;
         return make_pair(Iterator(tmp,this),true);
     }
+    
+    Iterator Find(const ValueType& v)
+    {
+        size_t index=Hashfun(v,_table.size());
+        node* tmp=_table[index];
+        while(tmp)
+        {
+            if(tmp->_value==v)
+            {
+                break;
+            }
+            tmp=tmp->_next;
+        }
+        return Iterator(tmp,this);
+    }
 
     void CheckLoadFactory()
     {
@@ -254,6 +293,23 @@ public:
         KofValueType _KofValueType;
         __HashFun<K> hashfun;
         return (hashfun(_KofValueType(v)))%size;
+    }
+
+    Iterator Begin()
+    {
+        for(size_t index=0;index<_table.size();index++)
+        {
+            if(_table[index])
+            {
+                return Iterator(_table[index],this);
+            }
+        }
+        return Iterator(NULL,this);
+    }
+
+    Iterator End()
+    {
+        return Iterator(NULL,this);
     }
 private:
     vector<node*> _table;
