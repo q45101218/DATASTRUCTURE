@@ -58,7 +58,7 @@ struct HashtableIterator
     typedef Hashtable<K,ValueType,KofValueType,__HashFun> hashtable;
     typedef HashtableIterator<K,ValueType,Ref,Ptr,KofValueType,__HashFun>  Self;
     typedef Hashnode<ValueType> node;
-    HashtableIterator(node* ptr,hashtable* ht)
+    HashtableIterator(node* ptr=NULL,hashtable* ht=NULL)
     :_ptr(ptr)
     ,_ht(ht)
     {}
@@ -90,6 +90,44 @@ public:
     Hashtable()
     :_size(0)
     {}
+
+    Hashtable(const hashtable& h)
+    :_size(0)
+    {
+        _table.size(h._table.size());
+        for(size_t index=0;index<_table.size();index++)
+        {
+            node* tmp=h._table[index];
+            while(tmp)
+            {
+                node* next=tmp->_next;
+                Insert(tmp->_value);
+                tmp=next;
+            }
+        }
+    }
+
+    hashtable& operator=(hashtable h)
+    {
+        swap(_size,h._size);
+        _table.swap(h._table);
+        return *this;
+    }
+
+    ~Hashtable()
+    {
+        for(size_t index=0;index<_table.size();index++)
+        {
+            if(_table[index])
+            {
+                node* del=_table[index];
+                node* next=del->_next;
+                delete del;
+                del=next;
+            }
+            _table[index]=NULL;
+        }
+    }
 
     pair<Iterator,bool> Insert(const ValueType& v)
     {
@@ -131,6 +169,7 @@ public:
                 }
             }
         }
+        _table.swap(newtable);
     }
 
     size_t GetNextPrime(size_t pre)
