@@ -73,8 +73,65 @@ struct HashtableIterator
         return _ptr;
     }
 
+
+
     hashtable* _ht;
     node* _ptr;
+
+private:
+    void Increase()
+    {
+        assert(_ptr);
+        if(_ptr->_next)
+        {
+            _ptr=_ptr->-next;
+            return;
+        }
+        else
+        {
+            size_t index=_ht->Hashfun(_ptr->_value,_ht->_table.size())+1;
+            for(index;index<_ht->_table.size();index++)
+            {
+                if(_ht->_table[index])
+                {
+                    _ptr=_ht->_table[index];
+                    return;
+                }
+            }
+            _ptr=NULL;
+        }
+    }
+
+    void Decrease()
+    {
+        size_t index=_ht->Hashfun(_ptr->_value,_ht->_table.size());
+        if(_ptr!=_ht->_table[index])
+        {
+            node* tmp=_ht->_table[index];
+            while(tmp->_next!=_ptr)
+            {
+                tmp=tmp->_next;
+            }
+            _ptr=tmp;
+        }
+        else
+        {
+            if(index==0)
+            {
+                _ptr=NULL;
+                return;
+            }
+            else
+            {
+                node* tmp=_ht->_table[index-1];
+                while(tmp->_next!=NULL)
+                {
+                    tmp=tmp->_next;
+                }
+                _ptr=tmp;
+            }
+        }
+    }
 };
 
 template<class K,class ValueType,class KofValueType,template<class> class __HashFun=_Hashfun >
