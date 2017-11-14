@@ -175,7 +175,6 @@ public:
     Hashtable(const hashtable& h)
     :_size(0)
     {
-        _table.size(h._table.size());
         for(size_t index=0;index<_table.size();index++)
         {
             node* tmp=h._table[index];
@@ -221,7 +220,37 @@ public:
         _size++;
         return make_pair(Iterator(tmp,this),true);
     }
-    
+   
+    bool Erase(Iterator& it)
+    {
+        assert(it);
+        return Erase(*it);
+    }
+
+    bool Erase(ValueType& v)
+    {
+        size_t index=Hashfun(v,_table.size());
+        node* del=_table[index];
+        node* pre=del;
+        if(del->_value==v)
+        {
+            _table[index]=del->_next;
+        }
+        while(del!=NULL)
+        {
+            if(del->_value==v)
+            {
+                pre->_next=del->_next;
+                delete del;
+                return true;
+            }
+            pre=del;
+            del=del->_next;
+        }
+        return false;
+    }
+
+
     Iterator Find(const ValueType& v)
     {
         size_t index=Hashfun(v,_table.size());
@@ -262,6 +291,7 @@ public:
                     newindex=Hashfun(tmp->_value,newtable.size());
                     tmp->_next=newtable[newindex];
                     newtable[newindex]=tmp;
+                    tmp=next;
                 }
             }
         }
@@ -323,5 +353,23 @@ int main()
     h.Insert(2);
     h.Insert(3);
     h.Insert(4);
+    h.Insert(5);
+    h.Insert(6);
+    h.Insert(7);
+    h.Insert(8);
+    h.Insert(9);
+    h.Insert(0);
+    Hashtable<int,pair<int,int>,_KofKV<int,int> > h2;
+    h2.Insert(pair<int,int>(1,1));
+    h2.Insert(pair<int,int>(2,1));
+    h2.Insert(pair<int,int>(3,1));
+    h2.Insert(pair<int,int>(4,1));
+    h2.Insert(pair<int,int>(5,1));
+    h2.Insert(pair<int,int>(6,1));
+    h2.Insert(pair<int,int>(7,1));
+    h2.Insert(pair<int,int>(8,1));
+    h2.Insert(pair<int,int>(9,1));
+    h2.Insert(pair<int,int>(10,1));
+    Hashtable<int,pair<int,int>,_KofKV<int,int> > h3(h2);
     return 0;   
 }
