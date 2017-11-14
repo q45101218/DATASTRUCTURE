@@ -99,6 +99,16 @@ struct HashtableIterator
         return tmp;
     }
 
+    bool operator!=(const Self& it)
+    {
+        return it._ptr!=_ptr; 
+    }
+
+    bool operator==(const Self& it)
+    {
+        return it._ptr==_ptr;
+    }
+
     hashtable* _ht;
     node* _ptr;
 
