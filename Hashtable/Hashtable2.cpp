@@ -63,14 +63,14 @@ struct HashtableIterator
     ,_ht(ht)
     {}
 
-    Ref operator->()
+    Ptr operator->()
     {
-        return &(*_ptr);
+        return &(_ptr->_value);
     }
 
-    Ptr operator*()
+    Ref operator*()
     {
-        return _ptr;
+        return _ptr->_value;
     }
 
     Self& operator++()
