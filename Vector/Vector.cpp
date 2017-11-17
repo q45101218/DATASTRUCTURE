@@ -7,8 +7,63 @@
 
 #include<iostream>
 #include<assert.h>
+#include<string.h>
 using namespace std;
 
+struct __FalseType{};
+struct __TrueType{};
+
+template<class T>
+struct TypeTraits
+{
+    typedef __FalseType Type;
+};
+
+template<>
+struct TypeTraits<int>
+{
+    typedef __TrueType Type;
+};
+
+template<>
+struct TypeTraits<char>
+{
+    typedef __TrueType Type;
+};
+
+template<>
+struct TypeTraits<double>
+{
+    typedef __TrueType Type;
+};
+
+template<>
+struct TypeTraits<size_t>
+{
+    typedef __TrueType Type;
+};
+
+template<class T>
+T* __Copy(T* des,T* src,size_t size,__FalseType)
+{
+    for(size_t index=0;index<size;index++)
+    {
+        des[index]=src[index];
+    }
+    return des;
+}
+
+template<class T>
+T* __Copy(T* des,T* src,size_t size,__TrueType)
+{
+    return (T*)memcpy(des,src,size*(sizeof(T)));
+}
+
+template<class T>
+T* Copy(T* des,T* src,size_t size)
+{
+    return __Copy<T>(des,src,size,typename TypeTraits<T>::Type());
+}
 
 template<class T>
 class Vector
@@ -82,11 +137,7 @@ public:
             T* tmp=new T[_capacity];
             if(_a!=NULL)
             {
-                size_t i;
-                for(i=0;i<_size;i++)
-                {
-                    tmp[i]=_a[i];
-                }
+                Copy(tmp,_a,_size);
                 delete[] _a;
             }
             _a=tmp;
