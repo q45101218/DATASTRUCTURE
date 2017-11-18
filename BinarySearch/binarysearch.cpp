@@ -67,6 +67,41 @@ public:
         return true;
     }
 
+    node* Find(const T& key)
+    {
+        node* cur=_root;
+        while(cur)
+        {
+            if(cur==key)
+            {
+                return cur;
+            }
+            else if(cur->_key>key)
+            {
+                cur=cur->_left;
+            }
+            else
+            {
+                cur=cur->_right;
+            }
+        }
+        return NULL;
+    }
+
+    void Inorder()
+    {
+        _Inorde(_root);
+        cout<<endl;
+    }
+
+    void _Inorde(node* root)
+    {
+        if(!root)
+            return;
+        _Inorde(root->_left);
+        cout<<root->_key<<" ";
+        _Inorde(root->_right);
+    }
 private:
     node* _root;
 };
@@ -80,5 +115,8 @@ int main()
     bs.Insert(9);
     bs.Insert(7);
     bs.Insert(8);
+
+    bs.Inorder();
+
     return 0;
 }
