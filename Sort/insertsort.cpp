@@ -30,7 +30,7 @@ void insertsort(int* data,size_t size)
     Compare com;
     int end;
     int tmp;
-    for(size_t index=0;index<size;index++)
+    for(size_t index=0;index<size-1;index++)
     {
         end=index;
         tmp=data[end+1];
