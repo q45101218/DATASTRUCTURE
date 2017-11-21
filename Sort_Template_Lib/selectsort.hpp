@@ -4,7 +4,7 @@
 	> Mail:yangkungetit@163.com 
 	> Created Time: Mon 20 Nov 2017 03:58:58 PM PST
  ************************************************************************/
-
+#pragma once
 #include<iostream>
 using namespace std;
 
@@ -56,9 +56,9 @@ void selectsort(int* data,size_t size)
     }
 }
 
-int main()
-{
-    int data[] = { 2, 5, 4, 9, 3, 6, 8, 7, 1, 0 };
-    selectsort<Less>(data,sizeof(data)/sizeof(data[0]));
-    return 0;
-}
+//int main()
+//{
+//    int data[] = { 2, 5, 4, 9, 3, 6, 8, 7, 1, 0 };
+//    selectsort<Less>(data,sizeof(data)/sizeof(data[0]));
+//    return 0;
+//}

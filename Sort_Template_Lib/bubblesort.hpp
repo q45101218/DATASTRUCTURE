@@ -4,7 +4,7 @@
 	> Mail:yangkungetit@163.com 
 	> Created Time: Tue 21 Nov 2017 02:16:34 PM CST
  ************************************************************************/
-
+#pragma once
 #include<iostream>
 using namespace std;
 
@@ -40,21 +40,21 @@ void bubblesort(int* data,int size)
 }
 
 
-void print(int* data,size_t size)
-{
-    for(int index=0;index<size;index++)
-        cout<<data[index]<<" ";
-    cout<<endl;
-}
-
-int main()
-{
-    int data[] = { 2, 5, 4, 9, 3, 6, 8, 7, 1, 0  };
-    bubblesort<Less>(data,sizeof(data)/sizeof(data[0]));
-    print(data,sizeof(data)/sizeof(data[0]));
-    bubblesort(data,sizeof(data)/sizeof(data[0]));
-    print(data,sizeof(data)/sizeof(data[0]));
-
-    return 0;
-
-}
+//void print(int* data,size_t size)
+//{
+//    for(int index=0;index<size;index++)
+//        cout<<data[index]<<" ";
+//    cout<<endl;
+//}
+//
+//int main()
+//{
+//    int data[] = { 2, 5, 4, 9, 3, 6, 8, 7, 1, 0  };
+//    bubblesort<Less>(data,sizeof(data)/sizeof(data[0]));
+//    print(data,sizeof(data)/sizeof(data[0]));
+//    bubblesort(data,sizeof(data)/sizeof(data[0]));
+//    print(data,sizeof(data)/sizeof(data[0]));
+//
+//    return 0;
+//
+//}

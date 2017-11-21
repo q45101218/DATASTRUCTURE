@@ -4,7 +4,7 @@
 	> Mail:yangkungetit@163.com 
 	> Created Time: Mon 20 Nov 2017 01:14:05 PM PST
  ************************************************************************/
-
+#pragma once
 #include<iostream>
 using namespace std;
 
@@ -44,9 +44,9 @@ void insertsort(int* data,size_t size)
 }
 
 
-int main()
-{
-    int data[]={2,5,4,9,3,6,8,7,1,0};
-    insertsort<Less>(data,sizeof(data)/sizeof(data[0]));
-    return 0;
-}
+//int main()
+//{
+//    int data[]={2,5,4,9,3,6,8,7,1,0};
+//    insertsort<Less>(data,sizeof(data)/sizeof(data[0]));
+//    return 0;
+//}
