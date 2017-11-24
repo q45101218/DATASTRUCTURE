@@ -10,9 +10,29 @@
 #include<assert.h>
 using namespace std;
 
+
+struct Greater
+{
+    bool operator()(int x,int y)
+    {
+        return x>y;
+    }
+};
+
+struct Less
+{
+    bool operator()(int x,int y)
+    {
+        return x<y;
+    }
+};
+
+
+template<template<class>class Compare=Greater>
 void Nonrecussion(int* data,int begin,int end)
 {
     assert(begin<end);
+    Compare com;
     stack<int> s;
     s.push(end);
     s.push(begin);
@@ -28,7 +48,7 @@ void Nonrecussion(int* data,int begin,int end)
         int slow=begin-1;
         while(fast<end)
         {
-            if(data[fast]<data[end])
+            if(com(data[fast],data[end]))
             {
                 swap(data[++slow],data[fast]);
             }
