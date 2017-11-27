@@ -9,6 +9,8 @@
 #include<stdio.h>
 #include<vector>
 #include<map>
+#include<set>
+#include<queue>
 #include<string>
 using namespace std;
 
@@ -49,6 +51,56 @@ public:
         {
             size_t dindex=findindex(des);
             _add(dindex,des,weight);
+        }
+    }
+
+    void breath_first(const V& name)
+    {
+        findindex(name);
+        queue<V> q;
+        set<V> familiar;
+        q.push(name);
+        while(!q.empty())
+        {
+            V n=q.front();
+            q.pop();
+            if(familiar.end()==familiar.find(n))
+            {
+                cout<<n<<" ";
+                size_t index=findindex(n);
+                node* cur=_adjacentlist[index];
+                while(cur)
+                {
+                    q.push(cur->_name);
+                    cur=cur->_next;
+                }
+            }
+
+            familiar.insert(n);
+        }
+        cout<<endl;
+    }
+
+    void depth_first(const V& name)
+    {
+        set<V> familiar;
+        _depth_first(name,familiar);
+    }
+
+
+
+    void _depth_first(const V& name,set<V>& familiar)
+    {
+        if(familiar.end()!=familiar.find(name))
+            return;
+        size_t index=findindex(name);
+        node* tmp=_adjacentlist[index];
+        cout<<name<<" ";
+        familiar.insert(name);
+        while(tmp)
+        {
+            _depth_first(tmp->_name,familiar);
+            tmp=tmp->_next;
         }
     }
 
@@ -112,8 +164,10 @@ int main()
     Graph<string,int> g(name,sizeof(name)/sizeof(name[0]));
     g.add("a","b",100);
     g.add("a","c",200);
-    g.add("b","c",300);
+    g.add("d","a",300);
     g.add("c","d",400);
+    g.add("b","d",599);
+    g.breath_first("a");
 
     
     Graph<string,int,false> g1(name,sizeof(name)/sizeof(name[0]));
