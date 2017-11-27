@@ -6,8 +6,10 @@
  ************************************************************************/
 
 #include<iostream>
+#include<stdio.h>
 #include<vector>
 #include<map>
+#include<string>
 using namespace std;
 
 template<class V,class W>
@@ -23,14 +25,80 @@ struct GraphNode
     {}
 };
 
-template<class V,class W>
+template<class V,class W,bool undigraph=true>
 class Graph
 {
     typedef GraphNode<V,W> node;
 public:
-    Graph()
-    {}
+    Graph(const V* name,size_t size)
+    {
+        _index.resize(size);
+        _adjacentlist.resize(size);
+        for(size_t index=0;index<size;index++)
+        {
+            _index[index]=name[index];
+            _findindex.insert(make_pair(name[index],index));
+        }
+    }
 
+    void add(const V& src,const V& des,const W& weight)
+    {
+        size_t sindex=findindex(src);
+        _add(sindex,des,weight);
+        if(undigraph)
+        {
+            size_t dindex=findindex(des);
+            _add(dindex,des,weight);
+        }
+    }
+
+    size_t findindex(const V& name)
+    {
+        typename map<V,size_t>::iterator it=_findindex.find(name);
+        if(it==_findindex.end())
+        {
+            perror("invaild parameter");
+        }
+        else
+        {
+            return it->second;
+        }
+    }
+
+    node* _add(size_t index,const V& des,const W& weight)
+    {
+        node* tmp=_adjacentlist[index];
+        while(tmp)
+        {
+            if(tmp->_name==des)
+                return tmp;
+            tmp=tmp->_next;
+        }
+        tmp=creat(index,des,weight);
+    }
+
+    node* creat(const size_t index,const V& des,const W& weight)
+    {
+        node* tmp=new node(des,weight);
+        tmp->_next=_adjacentlist[index];
+        _adjacentlist[index]=tmp;
+        return tmp;
+    }
+
+    ~Graph()
+    {
+        for(size_t index=0;index<_adjacentlist.size();index++)
+        {
+            node* del=_adjacentlist[index];
+            node* tmp;
+            while(del)
+            {
+                tmp=del->_next;
+                delete del;
+                del=tmp;
+            }
+        }
+    }
     
 private:
     vector<V> _index;
@@ -38,3 +106,20 @@ private:
     map<V,size_t> _findindex;
 };
 
+int main()
+{
+    string name[]={"a","b","c","d"};
+    Graph<string,int> g(name,sizeof(name)/sizeof(name[0]));
+    g.add("a","b",100);
+    g.add("a","c",200);
+    g.add("b","c",300);
+    g.add("c","d",400);
+
+    
+    Graph<string,int,false> g1(name,sizeof(name)/sizeof(name[0]));
+    g1.add("a","b",100);
+    g1.add("a","c",200);
+    g1.add("b","c",300);
+    g1.add("c","d",400);
+    return 0;
+}
