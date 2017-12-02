@@ -24,13 +24,29 @@ struct Node
     T _data;
 };
 
+template<class T,class Ref,class Ptr>
+struct Iterator
+{
+    typedef Iterator<T,Ref,Ptr> Self;
+    typedef Node<T> node;
+    Iterator(node* p=NULL)
+    :_ptr(p)
+    {}
+
+
+    node* _ptr;
+}
+
 template<class T>
 class List
 {
 public:
     List()
-    :_head(NULL)
-    {}
+    :_head(new node)
+    {
+        _head->_prev=_head;
+        _head->_next=_head;
+    }
 
     List(const List& l)
     :_head(NULL)
