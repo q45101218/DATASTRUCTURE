@@ -69,6 +69,7 @@ template<class T>
 class Vector
 {
 public:
+    typedef T* Iterator;
     Vector()
     :_a(NULL)
     ,_size(0)
