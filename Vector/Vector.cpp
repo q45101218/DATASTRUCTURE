@@ -70,6 +70,7 @@ class Vector
 {
 public:
     typedef T* Iterator;
+
     Vector()
     :_a(NULL)
     ,_size(0)
@@ -220,16 +221,18 @@ public:
             length--;
         }
     }
-    void Print()
-    {
-        assert(_size>0);
-        size_t index;
-        for(index=0;index<_size;index++)
-        {
-            cout<<_a[index]<<" ";
-        }
-        cout<<endl;
-    }
+    
+
+    //void Print()
+    //{
+    //    assert(_size>0);
+    //    size_t index;
+    //    for(index=0;index<_size;index++)
+    //    {
+    //        cout<<_a[index]<<" ";
+    //    }
+    //    cout<<endl;
+    //}
 private:
     T* _a;
     size_t _size;
