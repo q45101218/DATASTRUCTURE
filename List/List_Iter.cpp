@@ -34,12 +34,23 @@ public:
     :_p(p)
     {}
 
-    T& operator*()
+
+    bool operator==(self& it)
     {
-        return _p->data;
+        return it._p==_p;
     }
 
-    T* operator->()
+    bool operator!=(const self& it)
+    {
+        return it._p!=_p;
+    }
+
+    Ref operator*()
+    {
+        return _p->_data;
+    }
+
+    Ptr operator->()
     {
         return _p;
     }
@@ -99,40 +110,59 @@ public:
     {}
 
     ~List()
-    {}
+    {
+        node* tmp=_head->_next;
+        while(_head!=tmp)
+        {
+            node* cur=tmp->_next;
+            delete tmp;
+            tmp=cur;
+        }
+        delete _head;
+        cout<<"clear finised"<<endl;
+    }
 
     void PushBack(const T& data)
     {
-        _head->_pre->_next=new node(data);
-        _head->_pre->_next->_pre=_head->_pre;
-        _head->_pre->_next->_next=_head;
-        _head->_pre=_head->_pre->_next;
+       // _head->_pre->_next=new node(data);
+       // _head->_pre->_next->_pre=_head->_pre;
+       // _head->_pre->_next->_next=_head;
+       // _head->_pre=_head->_pre->_next;
+        Insert(End(),data);
     }
 
-    void PushFront()
-    {}
-
-    void PopBack(const T& data)
-    {}
-
-    void PopFront(const T& data)
-    {}
-
-    void Insert(Iterator& it,const T& data)
+    void PushFront(const T& data)
     {
+        Insert(Begin(),data);
     }
 
-    Iterator Find(const T& data)
-    {}
+    void PopBack()
+    {
+        Erase(--End());
+    }
 
-    Iterator Erase(Iterator& it)
+    void PopFront()
+    {
+        Erase(Begin());
+    }
+
+    void Insert(Iterator it,const T& data)
+    {
+        node* tmp=new node(data);
+        it._p->_pre->_next=tmp;
+        tmp->_pre=it._p->_pre;
+        tmp->_next=it._p;
+        it._p->_pre=tmp;
+    }
+
+    Iterator Erase(Iterator it)
     {
         assert(it!=End());
-        Iterator tmp(it->_pre);
-        tmp->_next=it->_next;
-        it->_next->_pre=tmp._p;
+        Iterator tmp(it._p->_pre);
+        tmp._p->_next=it._p->_next;
+        it._p->_next->_pre=tmp._p;
         delete it._p;
-        return tmp;
+        return tmp._p->_next;
     }
 
     bool Empty()
@@ -142,30 +172,66 @@ public:
 
     Iterator Begin()
     {
-        return _head->_next;
+        return Iterator(_head->_next);
     }
 
     Iterator End()
     {
-        return _head;
+        return Iterator(_head);
     }
 
     Const_Iterator Begin()const
     {
-        return _head->next;
+        return Const_Iterator(_head->_next);
     }
 
     Const_Iterator End()const
     {
-        return _head;
+        return Const_Iterator(_head);
     }
 
 private:
     node* _head;
 };
 
+
+void test(const List<int>& l)
+{
+    List<int>::Const_Iterator cit = l.Begin();
+    while (cit != l.End())
+    {
+        cout << *cit++ << " ";
+    }cout << endl;
+
+}
+
 int main()
 {
     List<int> l;
+    l.PushBack(1);
+    l.PushBack(2);
+    l.PushBack(3);
+    l.PushBack(4);
+    l.PushBack(5);
+    l.PushBack(6);
+    l.PushBack(7);
+    l.PushBack(8);
+    List<int>::Iterator it = l.Begin();
+    while (it != l.End())
+    {
+        cout << *it++ <<" ";
+    }cout << endl;
+
+    l.PopFront();
+    l.PopBack();
+    l.PushFront(0);
+    it = l.Begin();
+    while (it != l.End())
+    {
+        cout << *it++ << " ";
+    }cout << endl;
+
+    test(l);
     return 0;
 }
+
