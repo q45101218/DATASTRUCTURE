@@ -79,7 +79,7 @@ public:
 
     Iterator End()
     {
-        return finish;
+        return endofstor;
     }
 
     T& operator[](size_t pos)
@@ -90,7 +90,7 @@ public:
 
     void CheckAllocate()
     {
-        if(finish==(endofstor-1)||start==NULL)
+        if(finish==endofstor||start==NULL)
         {
             size_t have=finish-start;
             size_t newspace=2*(endofstor-start)+3;
@@ -118,7 +118,7 @@ public:
 
     size_t Size()
     {
-        return finish-endofstor;
+        return finish-start;
     }
 
 private:
