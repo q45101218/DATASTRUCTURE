@@ -77,6 +77,11 @@ public:
         _size(root->_leftchild,size);
         _size(root->_rightchild,size);
     }
+    
+    void levelinterview()
+    {
+        _levelinterview(_root);
+    }
 
     void preinterview_recursion()
     {
@@ -98,7 +103,33 @@ public:
     {
         _preinterview_nonrecursion(_root);
     }
+
+    void midinterview_nonrecursion()
+    {
+        _midinterview_nonrecursion(_root);
+    }
+
 private:
+    void _levelinterview(node*& root)
+    {
+        if(root==NULL)
+            return;
+        queue<node*> qbt;
+        node* tmp;
+        qbt.push(root);
+        while(!qbt.empty())
+        {
+            tmp=qbt.front();
+            qbt.pop();
+            cout<<tmp->_data<<" ";
+            if(tmp->_leftchild!=NULL)
+                qbt.push(tmp->_leftchild);
+            if(tmp->_rightchild!=NULL)
+                qbt.push(tmp->_rightchild);
+        }
+        cout<<endl;
+    }
+
     void _pre_interview_recursion(node*& root)
     {
         if(root==NULL)
@@ -178,6 +209,27 @@ private:
         }
         cout<<endl;
     }
+
+    void _midinterview_nonrecursion(node*& root)
+    {
+        if(root==NULL)
+            return;
+        stack<node*> sbt;
+        node* tmp=root;
+        while(tmp||!sbt.empty())
+        {
+            while(tmp)
+            {
+                sbt.push(tmp);
+                tmp=tmp->_leftchild;
+            }
+            tmp=sbt.top();
+            sbt.pop();
+            cout<<tmp->_data<<" ";
+            tmp=tmp->_rightchild;
+        }
+        cout<<endl;
+    }
 private:
     node* _root;
 };
@@ -189,9 +241,11 @@ int test()
     binarytree<int> bt(arry,'#');
     cout<<bt.size()<<endl;
     cout<<bt.height()<<endl;
+    bt.levelinterview();
     bt.preinterview_recursion();
     bt.preinterview_nonrecursion();
     bt.midinterview_recursion();
+    bt.midinterview_nonrecursion();
     bt.postinterview_recursion();
 }
 
