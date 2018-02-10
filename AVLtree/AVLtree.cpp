@@ -59,8 +59,10 @@ public:
             return true;
         }
         node* cur = _root;
+        node* parent = _root;
         while(cur)
         {
+            parent = cur;
             if(data < cur->_data)
             {
                 cur = cur->_left;
@@ -74,7 +76,18 @@ public:
                 return false;
             }
         }
-
+        if( data < parent->_data )
+        {
+            parent->_left = new node(data);
+            parent->_left._parent = parent;
+        }
+        else
+        {
+            parent->_right = new node(data);
+            parent->_right = new node(data);
+        }
+        while()
+        {}
     }
 
 
@@ -133,6 +146,36 @@ private:
         cout << root->_data << endl;
     }
 
+    void _LeftRote(node* cur)
+    {
+        node* parentR = cur->_right;
+        node* paretnRL = parentR->_left;
+        cur->_right = paretnRL;
+        if(parentRL !=  NULL)
+        {
+            parentRL->_parent = cur;
+        }
+        parentR->_left = cur;
+        node* grandp = cur->_parent;
+        cur->_parent = parentR;
+        if(grandp == NULL)
+        {
+            cur->_parent == NULL;
+            _root = cur;
+        }
+        else if(grandp->_left == cur)
+        {
+            grandp->__left == parentR;
+        }
+        else
+        {
+            grandp->_right == parentR;
+        }
+
+    }
+
+    void _RightRote()
+    {}
 private:
     node* _root;
 };
