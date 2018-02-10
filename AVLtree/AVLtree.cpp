@@ -93,7 +93,7 @@ public:
 
 private:
 
-    void _preorder(node*& const root)
+    void _preorder(node*& root)
     {
         if(root == NULL)
         {
@@ -111,7 +111,7 @@ private:
         }
     }
 
-    void _midorder(node*& const root)
+    void _midorder(node*& root)
     {
         if(root == NULL)
         {
@@ -129,7 +129,7 @@ private:
         }
     }
 
-    void _postorder(node*& const root)
+    void _postorder(node*& root)
     {
         if(root == NULL)
         {
@@ -149,8 +149,8 @@ private:
     void _LeftRote(node* cur)
     {
         node* parentR = cur->_right;
-        node* paretnRL = parentR->_left;
-        cur->_right = paretnRL;
+        node* parentRL = parentR->_left;
+        cur->_right = parentRL;
         if(parentRL !=  NULL)
         {
             parentRL->_parent = cur;
@@ -165,17 +165,40 @@ private:
         }
         else if(grandp->_left == cur)
         {
-            grandp->__left == parentR;
+            grandp->_left = parentR;
+            parentR->_right = grandp;
         }
         else
         {
-            grandp->_right == parentR;
+            grandp->_right = parentR;
+            parentR->parent = grandp;
         }
 
     }
 
-    void _RightRote()
-    {}
+    void _RightRote(node* cur)
+    {
+        node* parentL = cur->_left;
+        node* parentLR = parentL->_right;
+        cur->_left = parentLR;
+        if(parentLR)
+        {
+            parentLR->_parent = cur;
+        }
+        parentL->_right = cur;
+        node* grandp = cur->_parent;
+        cur->_parent = parentL;
+        if(grandp == NULL)
+        {
+            parentL->_parent == NULL;
+            _root = parentL;
+        }
+        else
+        {
+            grandp->_left == cur? grandp->_left = parentL : grandp->_right = parentL;
+            parentL->_parent = grandp;
+        }
+}
 private:
     node* _root;
 };
